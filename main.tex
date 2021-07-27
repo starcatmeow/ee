@@ -5,6 +5,13 @@
 \date{Jul 22}
 
 \usepackage{indentfirst}
+\usepackage{tikz}
+\usepackage{tabularx,booktabs}
+\usepackage[hidelinks]{hyperref}
+\usepackage[a4paper]{geometry}
+
+\usepackage[backend=biber,style=mla]{biblatex}
+\addbibresource{citations.bib}
 
 \parskip=1em
 
@@ -18,7 +25,6 @@
 \newpage
 
 \section{Introduction}
-
 Compression is the cornerstone of the internet.
 Behind the millions of bytes flowing between computers everyday around the world, compression algorithms are behind every single data packet.
 Compression algorithms are tools that can seemingly magically shrink a digital document, sometimes until they are a tenth of their size.
@@ -63,9 +69,101 @@ The results of the paper would help website creators decide the best format to s
 \section{Background Information}
 
 \subsection{Lossless and Lossy Compression}
+\noindent There are two major types of compression algorithms: lossy and lossless.
 
-\subsection{Commonly Used Types of Compression}
+\subsubsection{Lossless Compression}
+Lossless compression finds repetitive, similar patterns inside a file, condenses the data to the smallest possible size.
+One example of lossless compression is LZ77\footnote{add citation here}.
+Commonly used on plain text documents\footnote{\texttt{.txt} files}, LZ77 finds repeated words, and stores it for reference.
+The next time the repeated word is used, LZ77 stores a pointer that points towards the last instance of word.
+In this paragraph, the word \texttt{compression} is used 5 times.
+LZ77 will only store the first \texttt{compression}, and save space from the rest.
 
-\section{Background Information}
+Lossless compression is good for data with a lot of repetition.
+It also preserves the data it compresses, which lossy compression cannot.
+On the other hand, lossless compression is less efficient than lossy compression.
+
+\subsubsection{Lossy Compression}
+Lossy compression finds and remove redundant data.
+Lossy compression is used often in audio and video data.
+Due to its nature, lossy compression techniques varies greatly depending on the input data.
+While some lossless compression algorithms are generic, lossy compression algorithms cannot be interchange across different data types.
+
+Lossy compression is more efficient than lossless compression.
+But it can degrade the quality of the data, as some data is thrown away.
+It is not suitable for all types of data.
+For example, we cannot use lossy compression on text, as every character matters in a sentence.
+
+\subsection{Storing Images}
+A pixel is a square block with a specific color.
+When a grid of pixels are placed together, it forms an image.
+An image is simply a 2D array of pixels.
+And each pixel can be stored as color.
+This method of storing images is called \texttt{bitmap}.
+\texttt{Add cool diagram showing pixels and image.}
+
+Color is generally represented in a color space\footnote{method of storing color as data}.
+One commonly used color space is \texttt{RGB}\footnote{find rgb iso documents}, which stores the mixture of red, green, and blueness of a color.
+Imagine that a color is composed by shining red, green, blue light on a black wall.
+Where the number associated with each value is the brightness of the light.
+The resulting image would be stored as a 2D array, each element containing a RGB value.
+\texttt{Add cool image of RGB}.
+\texttt{Add table to demonstrate.}
+
+An alternative method of storing images is as mathematical equations.
+Images created this way are called \texttt{vector images}.
+Vector images have widely different use cases then bitmap images.
+However, this image type is severely limited at depicting complicated images, and is only suitable for digital art.
+Thus, this paper will work with bitmap images only.
+
+\subsubsection{Need for Compression}
+Storing images as arrays is fast and convenient, however it also results in large files.
+For example, a $1920$ by $1080$ image would take up $5.8$MiB of data.
+\texttt{add in appendix}.
+Although this seems small, considering that most webpages have only kilobytes of data, images occupy a large amount of space. 
+\texttt{Find website (reddit, amazon, apple, CSDN) to do example, use appendix to show calculations}.
+Videos are stored as a series of pictures.
+Using the same metrics as above, a 10 minute video would take up $104$GiB of space.
+Uploading this to a websites would be extremely impractical.
+
+\subsection{Image Formats}
+Modern computer systems compresses images by default.
+Different images files have been developed with different algorithms and uses in mind.
+Below is a table of common image file types.
+
+\begin{figure}
+\footnotesize
+\begin{tabularx}{\textwidth}{X X X X X X X }
+\toprule
+File Type & Extension & C. Method & C. Strength & Uses Case           & Availability & Cons \\
+\midrule
+\bf JFIF      & .jpg      & lossy     & medium      & still images        & high         & can cause compression artifacts              \\
+\bf PNG       & .png      & lossless  & medium      & high quality images & high         & worse compression than lossless compression \\
+\bf GIF       & .gif      & lossless  & low         & animated graphics   & high         & low performance                              \\
+\bf AVIF      & .avif     & both      & high        & all                 & medium       & basic support on some web browsers           \\
+\bf WebP      & .webp     & both      & high        & all                 & high         & slightly worse compression than AVIF         \\
+\bf TIFF      & .tiff     & lossless  & low         & high quality images & medium       & support on some browsers only                \\
+\bottomrule
+\end{tabularx}
+\texttt{split two tables, add full name}
+\end{figure}
+
+\subsection{Websites}
+Since this paper focuses on the use of compression on the internet, this subsection will briefly introduce the concepts of websites.
+Websites are hosted on rented cloud servers, with limitations on bandwidth, storage, processing power, and memory.
+Images are rendered client side by web browser, thus processing power and memory is irrelevant.
+Images require storage on the cloud server, large images may reduce the size of the website.
+When serving a website, bandwidth may limit the speed of transfer.
+Large images can increase loading times.
+Web developers have to balance image quality with image size when creating a website.
+
+Due to the many available web browsers, the standards for web development varies.
+Web browsers support different image formats.
+The most common web browser is Google Chrome\footnote{requires citation}, whilst many web browsers are based on Chrome.
+When displaying an image, web browsers have to decompress, taking up processing power.
+Although processing power is abundant on modern desktops, mobile devices and older computers may suffer.
+Web developers should be aware of the requirements of different image formats.
+
+\printbibliography
 
 \end{document}
