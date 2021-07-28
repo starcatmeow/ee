@@ -5,13 +5,31 @@
 \date{Jul 22}
 
 \usepackage{indentfirst}
-\usepackage{tikz}
 \usepackage{tabularx,booktabs}
-\usepackage[hidelinks]{hyperref}
 \usepackage[a4paper]{geometry}
+
+\usepackage{tikz}
+\usepackage{xcolor}
+
+\usepackage{hyperref}
+\hypersetup{
+	linktoc    = all,
+	colorlinks = true,
+	urlcolor   = blue,
+	linkcolor  = black,
+	filecolor  = black,
+	citecolor  = black,
+	pdftitle   = {\@title},
+	pdfauthor  = {\@author},
+}
 
 \usepackage[backend=biber,style=mla]{biblatex}
 \addbibresource{citations.bib}
+\DeclareBibliographyDriver{footcite:online}{%
+  \usedriver
+    {\renewbibmacro*{bbx:savehash}{}}
+    {online}}
+\providecommand{\biburldatelong}{}
 
 \parskip=1em
 
@@ -55,12 +73,12 @@ Each different method has its advantages and disadvantages.
 One format of compression I am very interested in is JFIF compression (commonly found in JPEG files).
 JFIF uses a mixture of clever math and the characteristics of the human eye to shrink photos.
 It is commonly used in digital cameras.
-However, JFIF was originally invented over 30 years ago (August 1990\footnote{Add citation here}), and have not account for the many modern technological advances.
+However, JFIF was originally invented over 30 years ago (August 1990\footcite{jpeg}), and have not account for the many modern technological advances.
 For example, JFIF is bad at dealing with digital art and digital text due to limitation of the compression techniques.
 In the recent years, newer and more efficient image compression algorithms have been created, such as Webp. 
 % can cut some stuff here
 In fact, JPEG has released a newer version of JFIF, called JPEG-2000.
-Some has even used Artificial Intelligence to enhance compression rates\footnote{https://ai.googleblog.com/2016/09/image-compression-with-neural-networks.html \textbf{setup biblatex :/}}.
+Some has even used Artificial Intelligence to enhance compression rates\footcite{googleAI}.
 
 Nevertheless, JFIF compression still remains as a dominant image compression technique.
 This paper aims to compare JFIF with modern image compression formats to evaluate whether it is still a competitive algorithm.
@@ -73,7 +91,7 @@ The results of the paper would help website creators decide the best format to s
 
 \subsubsection{Lossless Compression}
 Lossless compression finds repetitive, similar patterns inside a file, condenses the data to the smallest possible size.
-One example of lossless compression is LZ77\footnote{add citation here}.
+One example of lossless compression is LZ77\footcite{lzYT}.
 Commonly used on plain text documents\footnote{\texttt{.txt} files}, LZ77 finds repeated words, and stores it for reference.
 The next time the repeated word is used, LZ77 stores a pointer that points towards the last instance of word.
 In this paragraph, the word \texttt{compression} is used 5 times.
