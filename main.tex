@@ -23,13 +23,16 @@
 	pdfauthor  = {\@author},
 }
 
-\usepackage[backend=biber,style=mla]{biblatex}
+\usepackage[backend=biber,style=mla,showmedium=false]{biblatex}
 \addbibresource{citations.bib}
 \DeclareBibliographyDriver{footcite:online}{%
   \usedriver
     {\renewbibmacro*{bbx:savehash}{}}
     {online}}
 \providecommand{\biburldatelong}{}
+
+\usepackage{titlesec}
+\newcommand{\sectionbreak}{\clearpage}
 
 \parskip=1em
 
@@ -181,6 +184,85 @@ The most common web browser is Google Chrome\footnote{requires citation}, whilst
 When displaying an image, web browsers have to decompress, taking up processing power.
 Although processing power is abundant on modern desktops, mobile devices and older computers may suffer.
 Web developers should be aware of the requirements of different image formats.
+
+\section{JPEG Methodology}
+
+JFIF compression take advantages of two assumptions:\footcite{jpegCornell}
+\begin{enumerate}
+	\item Humans are more sensitive to brightness than color.
+	\item Humans are not sensitive to high frequency contents.
+\end{enumerate}
+
+The first step in the algorithm is to transform the color space from \texttt{RGB} to \texttt{YCbCr}.
+\texttt{Chroma Subsampling} (\ref{chroma}) is then performed on the image.
+The image then undergoes \texttt{2D Discrete Cosine Transform} (\ref{dct}), and is \texttt{quantized} (\ref{quantize}).
+Lastly, the resulting data matrix are compressed with \texttt{Huffman Encoding} (\ref{huffman}).
+
+\subsection{Chroma Subsampling}\label{chroma}
+Since the human eye is less sensitive to color than brightness, JFIF can downsample\footnote{reduce the size of an image} the color element of an image.
+The commonly used \texttt{RGB} colorspace is convenient for projecting images, but does not separate the color from the luminance\footnote{brightness} of an image, \texttt{YCbCr} is used instead.
+YCbCr separates color into \texttt{Y} (luminance, brightness of a pixel), \texttt{Cb} (chroma blue, blueness), and \texttt{Cr} (chroma red, redness).
+Chroma green is not stored, as it can be calculated from Cb and Cr\footcite{ycbcrMedia}.
+The resulted image will be a matrix of pixels with color data stored in YCbCR.
+
+% Subsampling 4:4:4, 4:2:2, 4:2:0
+% Add equation for rgb converting
+
+\subsection{Discrete Cosine Transform}\label{dct}
+Discrete Cosine Transform (DCT) separates an image into frequency components.
+DCT is a subset of Fourier Transformation\footcite{dctYT}, which takes a time based function and transforms it into the frequency and amplitude components.
+This is performed by first splitting an image into small 8 by 8 pixel chunks, then performing the algorithm.
+Although the DCT used on imaged are 2 dimensions, we can explain the concept from a 1 dimension perspective first.
+
+Lets take a single row of 8 pixels, and plot them on a graph with pixels on the x axis and intensity on the y axis.
+The resulted data points forms a signal.
+If we were to recreate the curve mathematically, we can plot a curve through the data points.
+DCT reconstructs the signal by stacking differently weighted cosine curves of different frequency and amplitude.
+
+For example, figure~\ref{fig:cos1} shows a cosine curve with a period of 8 pixels.
+Lets say this curve has a frequency of 1 unit.
+The purple coordinates represents the resultant signal.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth]{./figures/dct/cos1}
+	\caption{Cosine curve with frequency of 1 unit}
+	\label{fig:cos1}
+\end{figure}
+
+If we add an additional cosine curve with a frequency of 2 units, the signal will be changed.
+In this case, the signal is the average of both curves.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth]{./figures/dct/cos2}
+	\caption{Cosine curves with frequency 1 and 2 unit}
+	\label{fig:cos2}
+\end{figure}
+
+If we change to weighting of the average, we can change the signal.
+In this case, the cosine curve with a frequency of 1 unit is weighed 3 times as much as the other cosine curve.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth]{./figures/dct/cos3}
+	\caption{Weighted cosine curves}
+	\label{fig:cos3}
+\end{figure}
+
+DCT\footnote{More specifically DCT-II, used by JIFF compression} propose that we can represent any signal by adding 8 weighted cosine curves of increasing frequency.
+The resulted signal is modeled by this mathematical equation.
+The exact mathematics of DCT is too advance for the scope of this paper, implementation of DCT will be done through code.
+\begin{equation}
+	X_k = \sum_{n=0}^{N-1} x_n \cos \left [ \frac{\pi}{N} \left ( n + \frac{1}{2} \right ) \right ] \qquad k = 0, \dots , N - 1
+\end{equation}
+
+% explain why with notation table
+
+\texttt{Continue with an example here (use random number and find the frequency)}
+
+The example showed 1 dimension DCT, 2 dimention DCT is used on photos.
+
+\subsection{Quantization}\label{quantize}
+
+\subsection{Huffman Encoding}\label{huffman}
 
 \printbibliography
 
