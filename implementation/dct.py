@@ -2,16 +2,22 @@
 
 # %% Importing python packages
 import numpy as np
-import cv2
 from scipy import fftpack
 
 # %% Importing Image
-img = cv2.imread('./Photos/sofa.bmp')
-yuv_img = cv2.cvtColor(img, cv2.COLOR_BGR2YCR_CB)
 
-# %% **DCT**
+# Import from new image
+img = np.load('./arrays/img.npz')
 
-Y, Cr, Cb = cv2.split(yuv_img)
+uncompressed = np.load('./arrays/yuv_img.npz')  # Load uncompressed
+data = np.load('./arrays/comp.npz')
+
+# Y = uncompressed['Y']
+# Cb = uncompressed['Cb']
+# Cr = uncompressed['Cr']
+Y = data['Y']
+Cb = data['Cb']
+Cr = data['Cr']
 
 # %% split into 8x8 blocks
 Yy, Yx = Y.shape
@@ -21,7 +27,7 @@ for i in range(Yy):
     for j in range(Yx):
         Yblocks[i//8*Yx//8 + j//8][(i) % 8][(j) % 8] = Y[i][j]
 
-Cy, Cx = Y.shape
+Cy, Cx = Cr.shape
 Crblocks = np.zeros([Cx * Cy // 64, 8, 8], dtype=int)
 Cbblocks = np.zeros([Cx * Cy // 64, 8, 8], dtype=int)
 
@@ -54,3 +60,5 @@ qc = np.genfromtxt("./quantization table/ps010c.csv", delimiter=",", dtype=int)
 qYblocks = np.rint(Yblocks/ql)
 qCrblocks = np.rint(Crblocks/qc)
 qCbblocks = np.rint(Cbblocks/qc)
+
+np.savez("./arrays/qblocks", qYblocks=qYblocks, qCbblocks=qCbblocks, qCrblocks=qCrblocks)
