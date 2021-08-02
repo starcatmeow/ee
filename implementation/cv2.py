@@ -1,6 +1,6 @@
-#!/usr/bin/eval python3
+#!/usr/bin/env python3
 
-# %% Importing python packages
+# Importing python packages
 import numpy as np
 import cv2
 
@@ -21,11 +21,11 @@ def merge(a, b, c):
     return output
 
 
-# %% Importing Image
+# Importing Image
 img = cv2.imread('./Photos/cube.bmp')
 
-# %% Split image into RGB
-
+# **RGB**
+# Split image into RGB
 greenChannel = np.zeros(img.shape, dtype=np.uint8)
 for i in range(img.shape[0]):
     for j in range(img.shape[1]):
@@ -45,12 +45,11 @@ cv2.imwrite('./experiment/red.png', redChannel)
 cv2.imwrite('./experiment/green.png', greenChannel)
 cv2.imwrite('./experiment/blue.png', blueChannel)
 
-# %% Convert to YCbCr
+# **YCbCr**
+# Convert to YCbCr
 yuv_img = cv2.cvtColor(img, cv2.COLOR_BGR2YCR_CB)
 
-# %% Displaying YCbCr
-
-# splitting YCbCr
+# Splitting YCbCr
 YChannel = np.empty(yuv_img.shape, dtype=np.uint8)
 for i in range(yuv_img.shape[0]):
     for j in range(yuv_img.shape[1]):
@@ -82,7 +81,7 @@ cv2.imwrite('./experiment/Cb.png', CbChannelRGB)
 CrChannelRGB = cv2.cvtColor(CrChannel, cv2.COLOR_YCR_CB2BGR)
 cv2.imwrite('./experiment/Cr.png', CrChannelRGB)
 
-# %% Defining Compression Functions
+# Defining Compression Functions
 
 
 def comp422(inp):
@@ -181,7 +180,7 @@ def uncomp420(Y, Cb, Cr):
     return output
 
 
-# %% Compressing
+# **Compressing**
 
 # 4:2:0
 a, b, c = comp420(yuv_img)

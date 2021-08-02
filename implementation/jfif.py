@@ -1,12 +1,13 @@
-#!/usr/bin/eval python3
+#!/usr/bin/env python3
 
-# %%
+# Uses Imageio:
+# Use the cv2 script instead
+
 # Importing libraries
 import numpy as np
 from matplotlib import pyplot as plt
 import imageio as im
 
-# %%
 # Importing image
 image = im.imread("./Photos/cables.bmp")
 # image = im.imread('imageio:astronaut.png')
@@ -18,12 +19,10 @@ print(f'Shape: {image.shape}')
 # Vertifying rgb bit size
 print(f'Max: {image.max()}, Min: {image.min()}')
 
-# %%
 # Plotting Image
 plt.imshow(image)
 plt.show()
 
-# %% Showing R Channel
 redChannel = np.zeros(image.shape, dtype=np.uint8)
 for i in range(image.shape[0]):
     for j in range(image.shape[1]):
@@ -36,7 +35,6 @@ plt.xlabel('Width {}'.format(image.shape[1]))
 plt.imshow(redChannel)
 plt.show()
 
-# %% Showing G Channel
 greenChannel = np.zeros(image.shape, dtype=np.uint8)
 for i in range(image.shape[0]):
     for j in range(image.shape[1]):
@@ -49,7 +47,6 @@ plt.xlabel('Width {}'.format(image.shape[1]))
 plt.imshow(greenChannel)
 plt.show()
 
-# %% Showing B Channel
 blueChannel = np.zeros(image.shape, dtype=np.uint8)
 for i in range(image.shape[0]):
     for j in range(image.shape[1]):
