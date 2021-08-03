@@ -7,7 +7,7 @@ from scipy import fftpack
 # %% Importing Image
 
 # Import from new image
-img = np.load('./arrays/img.npz')
+img = np.load('./arrays/img.npy')
 
 uncompressed = np.load('./arrays/yuv_img.npz')  # Load uncompressed
 data = np.load('./arrays/comp.npz')
