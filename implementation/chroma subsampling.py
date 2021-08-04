@@ -10,9 +10,9 @@ np.save("./arrays/img", img)
 
 # %% **YCbCr**
 # Convert to YCbCr
-yuv_img = cv2.cvtColor(img, cv2.COLOR_BGR2YCR_CB)
-Y, Cr, Cb = cv2.split(yuv_img)
-np.savez("./arrays/yuv_img", Y=Y, Cb=Cb, Cr=Cr)
+ycbcr_img = cv2.cvtColor(img, cv2.COLOR_BGR2YCR_CB)
+Y, Cr, Cb = cv2.split(ycbcr_img)
+np.savez("./arrays/ycbcr_img", Y=Y, Cb=Cb, Cr=Cr)
 
 # %% Defining Compression Functions
 
@@ -73,5 +73,5 @@ def comp420(inp):
 
 # **Compressing**
 
-Y, Cb, Cr = comp420(yuv_img)
+Y, Cb, Cr = comp420(ycbcr_img)
 np.savez("./arrays/comp", Y=Y, Cb=Cb, Cr=Cr)

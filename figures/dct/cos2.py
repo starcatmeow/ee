@@ -5,10 +5,10 @@ from matplotlib import pyplot as plt
 
 
 def y(x, a):
-    return np.cos(np.pi/(4/a) * x)
+    return np.cos(np.pi/(3.5/a) * x)
 
 
-x = np.arange(0, 8, 0.01)
+x = np.arange(0, 7, 0.01)
 signal = np.arange(0, 8)
 y1 = y(x, 1)
 y2 = y(x, 2)

@@ -5,10 +5,10 @@ from matplotlib import pyplot as plt
 
 
 def y(x):
-    return np.cos(np.pi/4 * x)
+    return np.cos(np.pi/3.5 * x)
 
 
-x = np.arange(0, 8, 0.01)
+x = np.arange(0, 7, 0.01)
 signal = np.arange(0, 8)
 
 # Plot line of best fit
