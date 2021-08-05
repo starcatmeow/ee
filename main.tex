@@ -448,7 +448,7 @@ The \texttt{for} loop then iterates through the original chroma arrays, and sele
 \label{fig:chroma}
 \end{figure}
 
-Figure~\red{fig:chroma} shows the end result of chroma subsampling.
+Figure~\ref{fig:chroma} shows the end result of chroma subsampling.
 The even after discarding $75\%$ of the color data (\texttt{4:2:0}), the human cannot easily perceive the difference in image quality.
 However, when zoomed in, the details are somewhat noticeable.
 Especially on sharp edges and quick changes in color.
@@ -550,6 +550,26 @@ By dividing the DCT coefficients with the quantization coefficients, we are forc
 The smaller the quantization coefficient, the more accurate we can factor the DCT coefficients.
 By tuning the quantization coefficients, we can control how much data about a specific frequency to throw out.
 
+The code used to perform this operation is listed below:
+\begin{lstlisting}{language=python}
+# Importing Python libraries
+import numpy as np
+
+# Importing Quantization Tables
+ql = np.genfromtxt("./quantization table/ps010l.csv", delimiter=",", dtype=int)
+qc = np.genfromtxt("./quantization table/ps010c.csv", delimiter=",", dtype=int)
+
+# Quantization
+qYblocks = np.rint(Yblocks/ql)
+qCrblocks = np.rint(Crblocks/qc)
+qCbblocks = np.rint(Cbblocks/qc)
+\end{lstlisting}
+
+\texttt{ql} and \texttt{qc} are the quantization tables imported (\texttt{np.genfromtxt}) for luminance and chroma.
+Empty arrays (\texttt{qYblocks}, \texttt{qCrblocks}, \texttt{qCbblocks}) are created.
+Then, we quantize the value (\texttt{Yblocks/ql}), and store it in the empty array.
+The values are rounded (\texttt{np.rint}, round to nearest integer) instead of truncating, as it is more accurate (without increasing data size).
+
 \subsection{Run Length Encoding}
 After quantization, the resulted matrix is compressed into a string.
 Due to the increased amount of quantization the further south east down the matrix, the quantized matrix often have a lot of similar values towards the south east side.
@@ -559,6 +579,105 @@ In order to take advantage of this repetition, a pointer will traverse the matri
 \includegraphics[width=\linewidth]{./figures/zigzag.jpg}
 \caption{Path of the pointer~\autocite{dctProcessing}}
 \end{wrapfigure}
+
+The code used to perform zig zag manner is shown below.
+Due to the uniqueness of the operation, no libraries were used.
+
+\begin{lstlisting}{language=python}
+# Importing python packages
+import numpy as np
+
+qYblocks = data['qYblocks']
+qCbblocks = data['qCbblocks']
+qCrblocks = data['qCrblocks']
+
+# Entropy Encoder
+# This just works, very messy but works
+def entropyData(array):
+
+	# create empty array for output, move pointer to top left corner
+    output = np.zeros(64)
+    y = x = 0
+    i = 0
+
+	# Copy value of 0 0
+    output[i] = array[y][x]
+    i += 1
+
+	# Move right by one, copy value of 1 0
+    x += 1
+    output[i] = array[y][x]
+    i += 1
+
+	# Repeat 3 times
+    for j in range(3):
+
+		# Move diagonally left downwards until hitting left wall of array
+        while x != 0:
+            x -= 1
+            y += 1
+            output[i] = array[y][x]
+            i += 1
+		
+		# Move down by one
+        y += 1
+        output[i] = array[y][x]
+        i += 1
+
+		# Move diagonally right upwards until hitting top wall of array
+        while y != 0:
+            x += 1
+            y -= 1
+            output[i] = array[y][x]
+            i += 1
+
+		# Move right by one
+        x += 1
+        output[i] = array[y][x]
+        i += 1
+
+	# Complete to halfway point
+    while x != 0:
+        x -= 1
+        y += 1
+        output[i] = array[y][x]
+        i += 1
+
+    # Midpoint
+    x += 1
+    output[i] = array[y][x]
+    i += 1
+
+	# Complete other half
+    for j in range(3):
+
+		# Move diagonally right upwards until hitting top wall of array
+        while x < 7:
+            x += 1
+            y -= 1
+            output[i] = array[y][x]
+            i += 1
+
+		# Move down by one
+        y += 1
+        output[i] = array[y][x]
+        i += 1
+
+		# Move diagonally left downwards until hitting bottom wall of array
+        while y < 7:
+            x -= 1
+            y += 1
+            output[i] = array[y][x]
+            i += 1
+
+		# Move right by one
+        x += 1
+        output[i] = array[y][x]
+        i += 1
+
+	# Return 1D array output
+    return output
+\end{lstlisting}
 
 The result of this transformation is a 64 integer long string.
 Most of the integers with be repeated.
