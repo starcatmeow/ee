@@ -128,14 +128,69 @@ When a grid of pixels are placed together, it forms an image.
 An image is simply a 2D array of pixels.
 And each pixel can be stored as color.
 This method of storing images is called \texttt{bitmap}.
-\texttt{Add cool diagram showing pixels and image.}
 
 Color is generally represented in a colorspace\footnote{method of storing color as data}.
 One commonly used colorspace is \texttt{RGB}\footnote{find rgb iso documents}, which stores the mixture of red, green, and blueness of a color.
 Imagine that a color is composed by shining red, green, blue light on a black wall.
 Where the number associated with each value is the brightness of the light.
 The resulting image would be stored as a 2D array, each element containing a RGB value.
-\texttt{show pixelated image to matrix}
+
+\begin{figure}[h]
+\tiny
+\begin{subfigure}{0.5\textwidth}
+\begin{center}
+	\includegraphics[width=\linewidth]{./implementation/Photos/art.png}
+\end{center}
+\caption{An 8 by 8 image made out of pixels}
+\end{subfigure}
+\begin{subfigure}{0.5\textwidth}
+\begin{equation*}
+\begin{bmatrix}
+	156 & 177 & 167 & 188 & 200 & 188 & 156 & 214 \\
+	142 & 200 & 186 & 169 & 139 & 133 & 179 & 149 \\
+	212 & 196 & 122 &  97 & 131 &  42 & 113 & 174 \\
+	174 & 169 & 253 & 183 & 106 &   4 & 171 & 129 \\
+	170 & 174 & 191 & 124 & 101 & 148 &  80 & 180 \\
+	191 & 170 & 238 & 161 &  23 & 199 & 176 & 119 \\
+	205 & 183 & 206 & 200 & 164 & 157 & 166 & 167 \\
+	162 & 138 & 113 &  54 & 111 &  86 &  84 & 134 \\
+\end{bmatrix}
+\end{equation*}
+\caption{R Channel Data}
+\end{subfigure}
+
+\begin{subfigure}{0.5\textwidth}
+\begin{equation*}
+\begin{bmatrix}
+	155 & 176 & 137 & 155 & 172 & 161 & 156 & 213 \\
+	137 & 160 & 144 & 126 & 109 & 124 & 179 & 127 \\
+	163 & 145 &  85 &  94 & 130 &  26 &  89 & 160 \\
+	147 & 149 &   3 & 165 &  84 & 251 & 169 & 128 \\
+	152 & 140 & 148 &  90 &  72 & 124 &  78 & 136 \\
+	163 & 135 & 142 & 147 &   2 & 145 & 134 &  98 \\
+	175 & 156 & 154 & 150 & 133 & 145 & 130 & 126 \\
+	135 &  85 &  94 &  54 & 111 &  48 &  65 & 133 \\
+\end{bmatrix}
+\end{equation*}
+\caption{G Channel Data}
+\end{subfigure}
+\begin{subfigure}{0.5\textwidth}
+\begin{equation*}
+\begin{bmatrix}
+	215 & 223 & 199 & 205 & 209 & 192 & 215 & 238 \\
+	207 & 206 & 195 & 183 & 172 & 195 & 224 & 183 \\
+	203 & 192 & 144 & 188 & 205 &  79 & 166 & 203 \\
+	202 & 196 &   3 & 205 & 175 &  65 & 219 & 204 \\
+	209 & 196 & 191 & 200 & 221 & 195 & 182 & 189 \\
+	201 & 189 & 195 & 239 & 254 & 177 & 188 & 185 \\
+	214 & 206 & 196 & 191 & 190 & 203 & 171 & 166 \\
+	199 & 107 & 143 & 103 & 118 &  96 &  89 & 206 \\
+\end{bmatrix}
+\end{equation*}
+\caption{B Channel Data}
+\end{subfigure}
+\caption{RGB Colorspace}
+\end{figure}
 
 An alternative method of storing images is as mathematical equations.
 Images created this way are called \texttt{vector images}.
@@ -146,12 +201,18 @@ Thus, this paper will work with bitmap images only.
 \subsubsection{Need for Compression}
 Storing images as arrays is fast and convenient, however it also results in large files.
 For example, a $1920$ by $1080$ image would take up $5.8$MiB of data.
-\texttt{add in appendix}.
+\begin{equation}
+	(1920 \cdot 1080)\; \texttt{pixels} \cdot 3\; \texttt{bytes} = 5.8 \texttt{MiB}
+\end{equation}
 Although this seems small, considering that most webpages have only kilobytes of data, images occupy a large amount of space. 
-\texttt{Find website (reddit, amazon, apple, CSDN) to do example, use appendix to show calculations}.
 Videos are stored as a series of pictures.
 Using the same metrics as above, a 10 minute video would take up $104$GiB of space.
 Uploading this to a websites would be extremely impractical.
+
+For example, downloading the website \texttt{https://www.apple.com/iphone-12/} took $75\texttt{MiB}$ of data.
+Out of the $75\texttt{MiB}$ of data, $71.3\texttt{MiB}$ of data was from images.
+The rest of the website (including fonts, html, javascript) only occupies $5.1\texttt{MiB}$.
+Over $93\%$ of the website is from images only.
 
 \subsection{Image Formats}
 Modern computer systems compresses images by default.
@@ -336,6 +397,13 @@ Figure~\ref{fig:rgb} shows the \texttt{RGB} colorspace.
 Figure~\ref{fig:ycbcr} shows the same picture converted to \texttt{YCbCr} colorspace.
 
 \subsubsection{Subsampling}
+
+\begin{wrapfigure}{l}{0.4\textwidth}
+\includegraphics[width=\linewidth]{./figures/subsampling.png}
+\caption{Chroma Subsampling illustrated}
+\label{fig:subsampling}
+\end{wrapfigure}
+
 Humans are more sensitive to brightness that color.
 Since the brightness (luminance) is stored as Y in YCbCr, and color (chroma) stored as Cb and Cr, we process them separately.
 According to this statement, we can reduce the amount of details stored Cb and Cr, which would create minimal effects on the human eye.
@@ -343,12 +411,6 @@ According to this statement, we can reduce the amount of details stored Cb and C
 We can perform this operation by only storing half (or any other arbitrary number) the amount of pixels.
 When decompressing the image, the missing pixels would then be interpolated.
 This could be done by averaging out the nearest two available pixels, or simply referring to the pixel or the left.
-
-\begin{wrapfigure}{r}{0.4\textwidth}
-\includegraphics[width=\linewidth]{./figures/subsampling.png}
-\caption{Chroma Subsampling illustrated}
-\label{fig:subsampling}
-\end{wrapfigure}
 
 There are several common schemes for discarding pixels: \texttt{4:4:4}, \texttt{4:2:2}, and \texttt{4:2:0} (refer to figure~\ref{fig:subsampling}).
 Note, only chroma pixels are discarded, as discarding luminance pixels makes a noticeable difference.
@@ -358,7 +420,7 @@ Note, only chroma pixels are discarded, as discarding luminance pixels makes a n
 A less common \texttt{4:1:1} keeps only every fourth column, discarding $\frac{3}{4}$ of the pixels (but vertically).
 
 The code used for chroma subsampling is listed below:
-\begin{lstlisting}{language=python}
+\begin{lstlisting}[language=Python]
 def comp422(inp):
     """4:2:2 chroma subsampling"""
     Y, Cr, Cb = cv2.split(inp)
@@ -459,7 +521,7 @@ DCT is a subset of Fourier Transformation~\autocite{dctYT}, which takes a time b
 This is performed by first splitting an image into small 8 by 8 pixel chunks, then performing the algorithm.
 Although the DCT used on imaged are 2 dimensions, we can explain the concept from a 1 dimension perspective first.
 
-\begin{figure}[h]
+	\begin{figure}[h]
 \centering
 \begin{subfigure}[b]{0.45\textwidth}
 	\centering
@@ -551,7 +613,7 @@ The smaller the quantization coefficient, the more accurate we can factor the DC
 By tuning the quantization coefficients, we can control how much data about a specific frequency to throw out.
 
 The code used to perform this operation is listed below:
-\begin{lstlisting}{language=python}
+\begin{lstlisting}[language=Python]
 # Importing Python libraries
 import numpy as np
 
@@ -571,19 +633,20 @@ Then, we quantize the value (\texttt{Yblocks/ql}), and store it in the empty arr
 The values are rounded (\texttt{np.rint}, round to nearest integer) instead of truncating, as it is more accurate (without increasing data size).
 
 \subsection{Run Length Encoding}
-After quantization, the resulted matrix is compressed into a string.
-Due to the increased amount of quantization the further south east down the matrix, the quantized matrix often have a lot of similar values towards the south east side.
-In order to take advantage of this repetition, a pointer will traverse the matrix in a zig zag manner, compacting it into a string.
 
 \begin{wrapfigure}{r}{0.3\textwidth}
 \includegraphics[width=\linewidth]{./figures/zigzag.jpg}
 \caption{Path of the pointer~\autocite{dctProcessing}}
 \end{wrapfigure}
 
+After quantization, the resulted matrix is compressed into a string.
+Due to the increased amount of quantization the further south east down the matrix, the quantized matrix often have a lot of similar values towards the south east side.
+In order to take advantage of this repetition, a pointer will traverse the matrix in a zig zag manner, compacting it into a string.
+
 The code used to perform zig zag manner is shown below.
 Due to the uniqueness of the operation, no libraries were used.
 
-\begin{lstlisting}{language=python}
+\begin{lstlisting}[language=Python]
 # Importing python packages
 import numpy as np
 
@@ -688,10 +751,24 @@ For a string with many repetitions, run length encoding can reduce the space req
 \subsection{Huffman Coding}\label{huffman}
 To convert the string of data into binary, huffman coding is performed.
 Huffman coding furthers losslessly compresses the data by effectively assigning symbols to each element in the string.
-Firstly, an huffman tree is created from the string.
-
-To create an huffman tree, the frequency of every element is counted.
 % Finish this once you understand it better!!!
+
+\section{Evaluation!!!!!!}
+
+\subsection{Effectiveness/Benchmark}
+
+\subsection{Speed}
+
+\subsection{Artifacts}
+
+\subsection{Modern Features}
+
+\section{Conclusion}
+JFIF compression is an integral part of the internet in both its history and current time.
+Although old, JFIF compression still holds up when used on the correct types of images.
+Its compression is high, without losing out majorly on image quality.
+However, development of technology has also bring forwards more types of images, some unsuitable for JFIF compression.
+Image types like digital art and raw photos are better left for newer image compression methods.
 
 \newpage
 \printbibliography
