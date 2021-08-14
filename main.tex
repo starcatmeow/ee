@@ -139,7 +139,7 @@ The resulting image would be stored as a 2D array, each element containing a RGB
 \tiny
 \begin{subfigure}{0.5\textwidth}
 \begin{center}
-	\includegraphics[width=\linewidth]{./implementation/Photos/art.png}
+	\includegraphics[width=\linewidth]{./implementation/Photos/art upscaled.png}
 \end{center}
 \caption{\texttt{art.png,} An 8 by 8 image made out of pixels}
 \end{subfigure}
@@ -699,7 +699,7 @@ This process is called quantization.
 
 \begin{figure}[h]
 \centering
-\begin{equation}
+\begin{equation*}
 	\begin{bmatrix}
 		8  & 6  & 6  & 8  & 12 & 14 & 16 & 17 \\
 		6  & 6  & 6  & 8  & 10 & 13 & 12 & 15 \\
@@ -710,15 +710,15 @@ This process is called quantization.
 		16 & 12 & 18 & 24 & 34 & 39 & 39 & 39 \\
 		17 & 15 & 24 & 35 & 39 & 39 & 39 & 39
 	\end{bmatrix}
-\end{equation}
-\label{fig:quantization}
+\end{equation*}
+\label{quantization}
 \caption{Luminance quantization table from Photoshop Save To Web 050~\autocite{quantization}}
 \end{figure}
 
 This is done mathematically by dividing the DCT coefficients by a quantization table.
 Each element in the DCT coefficients is divided by their responding quantization table, the resulted value rounded and stored as the quantized data matrix.
 The process of rounding quantized data is removing information depending on the importance of each frequency.
-Notice how in figure~\ref{fig:quantization}, the element in the quantization table increases as we move to the bottom right corner.
+Notice how in figure~\ref{quantization}, the element in the quantization table increases as we move to the bottom right corner.
 The higher the quantization factor, the lower the importance of that specific frequency block.
 
 We can imagine the rounding process as a process of finding factors.

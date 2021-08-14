@@ -90,7 +90,14 @@ def quantizationToStr(array):
     return output
 
 
-# Create string from each quantized table
+# RLE every block
+import rle
 qYentropy = []
+
 for i in range(qYblocks.shape[0]):
-    qYentropy.append(quantizationToStr(entropyData(qYblocks[i])))
+    qYentropy.append(rle.encode(entropyData(qYblocks[i])))
+
+# %% Huffman
+from dahuffman import HuffmanCodec
+# https://pypi.org/project/dahuffman/
+# Need to convert to string
