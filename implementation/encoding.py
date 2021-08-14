@@ -93,9 +93,17 @@ def quantizationToStr(array):
 # RLE every block
 import rle
 qYentropy = []
+qCbentropy = []
+qCrentropy = []
 
 for i in range(qYblocks.shape[0]):
     qYentropy.append(rle.encode(entropyData(qYblocks[i])))
+
+for i in range(qCrblocks.shape[0]):
+    qCbentropy.append(rle.encode(entropyData(qCbblocks[i])))
+    qCrentropy.append(rle.encode(entropyData(qCrblocks[i])))
+
+np.savez("./arrays/entropy", qYentropy=qYentropy, qCbentropy=qCbentropy, qCrentropy=qCrentropy)
 
 # %% Huffman
 from dahuffman import HuffmanCodec
