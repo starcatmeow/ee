@@ -4,7 +4,6 @@
 \author{Uzen}
 \date{Jul 22}
 
-\usepackage{indentfirst}
 \usepackage{tabularx,booktabs}
 \usepackage[a4paper]{geometry}
 
@@ -33,15 +32,32 @@
 \providecommand{\biburldatelong}{}
 
 \usepackage{titlesec}
-\newcommand{\sectionbreak}{\clearpage}
+% \newcommand{\sectionbreak}{\clearpage}
 
 \usepackage{caption}
 \usepackage{subcaption}
 
 \usepackage{listings}
+\lstset{
+  language     = Python,
+  basicstyle   = \ttfamily,
+  keywordstyle = \color{blue}\textbf,
+  commentstyle = \color{gray},
+  stringstyle  = \color{green!70!black},
+  stringstyle  = \color{red},
+  columns      = fullflexible,
+  numbers      = left,
+  numberstyle  = \scriptsize\sffamily\color{gray},
+  showstringspaces = false,
+  float,
+}
+
 \usepackage{wrapfig}
 
-\parskip=1em
+\usepackage[toc,page]{appendix}
+
+% \parskip=1em
+% \usepackage{indentfirst}
 
 \begin{document}
 
@@ -122,7 +138,7 @@ But it can degrade the quality of the data, as some data is thrown away.
 It is not suitable for all types of data.
 For example, we cannot use lossy compression on text, as every character matters in a sentence.
 
-\subsection{Storing Images}
+\subsection{Storing Images}\label{RGB}
 A pixel is a square block with a specific color.
 When a grid of pixels are placed together, it forms an image.
 An image is simply a 2D array of pixels.
@@ -136,7 +152,7 @@ Where the number associated with each value is the brightness of the light.
 The resulting image would be stored as a 2D array, each element containing a RGB value.
 
 \begin{figure}[h]
-\tiny
+\footnotesize
 \begin{subfigure}{0.5\textwidth}
 \begin{center}
 	\includegraphics[width=\linewidth]{./implementation/Photos/art upscaled.png}
@@ -221,6 +237,7 @@ Below is a table of common image file types.
 
 \begin{figure}[h]
 \begin{subfigure}{\textwidth}
+\caption{Table of common image file types}
 \begin{tabular}{l l l l l}
 \toprule
 File Type & Full Name                             & Extension & C. Method & C. Strength \\
@@ -234,11 +251,11 @@ TIFF      & Tagged Image File                     & .tiff     & lossless  & low 
 BMP       & Bitmap File                           & .bmp      & none      & none \\
 \bottomrule
 \end{tabular}
-\caption{Table of common image file types}
 \end{subfigure}
 
 \begin{subfigure}{\textwidth}
 \centering
+\caption{Table of image compression}
 \begin{tabular}{l l l l}
 \toprule
 File Type & Uses Case           & Availability & Cons \\
@@ -252,7 +269,6 @@ TIFF      & high quality images & medium       & support on some browsers only  
 BMP       & uncompressed images & low          & no compression, not suitable for web         \\
 \bottomrule
 \end{tabular}
-\caption{Table of image compression}
 \end{subfigure}
 \end{figure}
 
@@ -283,6 +299,8 @@ Any libraries used will be notated in the code, by the \texttt{import} statement
 
 \section{JPEG Methodology}
 
+% Add Flowchart
+
 JFIF compression take advantages of two assumptions:~\autocite{jpegCornell}
 \begin{enumerate}
 	\item Humans are more sensitive to brightness than color.
@@ -290,9 +308,9 @@ JFIF compression take advantages of two assumptions:~\autocite{jpegCornell}
 \end{enumerate}
 
 The first step in the algorithm is to transform the colorspace from \texttt{RGB} to \texttt{YCbCr}.
-\texttt{Chroma Subsampling} (\ref{chroma}) is then performed on the image.
-The image then undergoes \texttt{2D Discrete Cosine Transform} (\ref{dct}), and is \texttt{quantized} (\ref{quantize}).
-Lastly, the resulting data matrix are compressed with \texttt{Huffman Encoding} (\ref{huffman}).
+\texttt{Chroma Subsampling} (section~\ref{chroma}) is then performed on the image.
+The image then undergoes \texttt{2D Discrete Cosine Transform} (section~\ref{dct}), and is \texttt{quantized} (section~\ref{quantize}).
+Lastly, the resulting data matrix are compressed with \texttt{Huffman Encoding} (section~\ref{huffman}).
 
 This section will only detail the steps to compression.
 As the steps to decompressing is simply the reverse of the compression process.
@@ -300,17 +318,78 @@ As the steps to decompressing is simply the reverse of the compression process.
 \subsection{Chroma Subsampling}\label{chroma}
 
 \subsubsection{YCbCr}
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}[b]{0.4\textwidth}
+\caption{Original Picture}
+\begin{center}
+	\includegraphics[width=\textwidth]{./implementation/experiment/out.png}
+\end{center}
+\end{subfigure}%
+\begin{subfigure}[b]{0.4\textwidth}
+\caption{R colorspace}
+\begin{center}
+	\includegraphics[width=\textwidth]{./implementation/experiment/red.png}
+\end{center}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\textwidth}
+\begin{center}
+	\includegraphics[width=\textwidth]{./implementation/experiment/green.png}
+\end{center}
+\caption{G colorspace}
+\end{subfigure}%
+\begin{subfigure}[b]{0.4\textwidth}
+\begin{center}
+	\includegraphics[width=\textwidth]{./implementation/experiment/blue.png}
+\end{center}
+\caption{B colorspace}
+\end{subfigure}
+\caption{\texttt{RGB} colorspace}
+\label{fig:rgb}
+\end{figure}
+
 Since the human eye is less sensitive to color than brightness, JFIF can downsample\footnote{reduce the size of an image} the color element of an image.
-The commonly used \texttt{RGB} colorspace is convenient for projecting images, but does not separate the color from the luminance\footnote{brightness} of an image, \texttt{YCbCr} is used instead.
+	The commonly used \texttt{RGB} colorspace (refer to section~\ref{RGB}) is convenient for projecting images, but does not separate the color from the luminance\footnote{brightness} of an image, \texttt{YCbCr} is used instead.
 YCbCr separates color into \texttt{Y} (luminance, brightness of a pixel), \texttt{Cb} (chroma blue, blueness), and \texttt{Cr} (chroma red, redness).
 Chroma green is not stored, as it can be calculated from Cb and Cr~\autocite{ycbcrMedia}.
 The resulted image will be a matrix of pixels with color data stored in YCbCR.
 
+\begin{figure}[h!]
+\centering
+\begin{subfigure}[b]{0.4\textwidth}
+\caption{Original Picture}
+\begin{center}
+	\includegraphics[width=\textwidth]{./implementation/experiment/out.png}
+\end{center}
+\end{subfigure}%
+\begin{subfigure}[b]{0.4\textwidth}
+\caption{Luminance}
+\begin{center}
+	\includegraphics[width=\textwidth]{./implementation/experiment/Y.png}
+\end{center}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\textwidth}
+\begin{center}
+	\includegraphics[width=\textwidth]{./implementation/experiment/Cb.png}
+\end{center}
+\caption{Chroma Blue}
+\end{subfigure}%
+\begin{subfigure}[b]{0.4\textwidth}
+\begin{center}
+	\includegraphics[width=\textwidth]{./implementation/experiment/Cr.png}
+\end{center}
+\caption{Chroma Red}
+\end{subfigure}
+\caption{\texttt{YCbCr} colorspace}
+\label{fig:ycbcr}
+\end{figure}
+
 The equation to convert \texttt{RGB} to \texttt{YCbCr} is:
 \begin{align}
 	Y'  &= 16  + (65.481 \cdot R' + 128.553\cdot G' + 24.966 \cdot B') \\
-	C_B &= 128 + (-37.797 \cdot R' + 74.203 \cdot G' + 112.0 \cdot B') \\
-	C_R &= 128 + (112.0 \cdot R' - 93.786 \cdot G' - 18.214 \cdot B')
+	C_b &= 128 + (-37.797 \cdot R' + 74.203 \cdot G' + 112.0 \cdot B') \\
+	C_r &= 128 + (112.0 \cdot R' - 93.786 \cdot G' - 18.214 \cdot B')
 \end{align} 
 
 An code snippet in python for said conversion is listed below:
@@ -333,66 +412,6 @@ The code imports \texttt{cube.bmp} as three arrays into \texttt{img}, holding th
 \texttt{cv2.cvtColor} is then used to convert the RGB matrix into corresponding YCbCr matrix.
 \texttt{cv2.split} splits the image into separate color channels, used for later processing.
 
-\begin{figure}[h]
-\centering
-\begin{subfigure}[b]{0.4\textwidth}
-\caption{Original Picture}
-\begin{center}
-	\includegraphics[width=\textwidth]{./implementation/experiment/out.png}
-\end{center}
-\end{subfigure}
-\begin{subfigure}[b]{0.4\textwidth}
-\caption{R colorspace}
-\begin{center}
-	\includegraphics[width=\textwidth]{./implementation/experiment/red.png}
-\end{center}
-\end{subfigure}
-\begin{subfigure}[b]{0.4\textwidth}
-\begin{center}
-	\includegraphics[width=\textwidth]{./implementation/experiment/green.png}
-\end{center}
-\caption{G colorspace}
-\end{subfigure}
-\begin{subfigure}[b]{0.4\textwidth}
-\begin{center}
-	\includegraphics[width=\textwidth]{./implementation/experiment/blue.png}
-\end{center}
-\caption{B colorspace}
-\end{subfigure}
-\caption{\texttt{RGB} colorspace}
-\label{fig:rgb}
-\end{figure}
-
-\begin{figure}[h!]
-\centering
-\begin{subfigure}[b]{0.4\textwidth}
-\caption{Original Picture}
-\begin{center}
-	\includegraphics[width=\textwidth]{./implementation/experiment/out.png}
-\end{center}
-\end{subfigure}
-\begin{subfigure}[b]{0.4\textwidth}
-\caption{Luminance}
-\begin{center}
-	\includegraphics[width=\textwidth]{./implementation/experiment/Y.png}
-\end{center}
-\end{subfigure}
-\begin{subfigure}[b]{0.4\textwidth}
-\begin{center}
-	\includegraphics[width=\textwidth]{./implementation/experiment/Cb.png}
-\end{center}
-\caption{Chroma Blue}
-\end{subfigure}
-\begin{subfigure}[b]{0.4\textwidth}
-\begin{center}
-	\includegraphics[width=\textwidth]{./implementation/experiment/Cr.png}
-\end{center}
-\caption{Chroma Red}
-\end{subfigure}
-\caption{\texttt{YCbCr} colorspace}
-\label{fig:ycbcr}
-\end{figure}
-
 Figure~\ref{fig:rgb} shows the \texttt{RGB} colorspace.
 Figure~\ref{fig:ycbcr} shows the same picture converted to \texttt{YCbCr} colorspace.
 
@@ -412,7 +431,7 @@ We can perform this operation by only storing half (or any other arbitrary numbe
 When decompressing the image, the missing pixels would then be interpolated.
 This could be done by averaging out the nearest two available pixels, or simply referring to the pixel or the left.
 
-There are several common schemes for discarding pixels: \texttt{4:4:4}, \texttt{4:2:2}, and \texttt{4:2:0} (refer to figure~\ref{fig:subsampling}).
+There are several common schemes for discarding pixels: \texttt{4:4:4}, \texttt{4:2:2}, and \texttt{4:2:0} (refer to Figure~\ref{fig:subsampling}).
 Note, only chroma pixels are discarded, as discarding luminance pixels makes a noticeable difference.
 \texttt{4:4:4} discards no pixels, essentially no sub sampling.
 \texttt{4:2:2} discards every second column, discarding half the pixels.
@@ -487,7 +506,7 @@ The \texttt{for} loop then iterates through the original chroma arrays, and sele
 \begin{center}
 	\includegraphics[width=\textwidth]{./implementation/experiment/out.png}
 \end{center}
-\end{subfigure}
+\end{subfigure}%
 \begin{subfigure}[b]{0.4\textwidth}
 \caption{\texttt{4:2:2}}
 \begin{center}
@@ -499,7 +518,7 @@ The \texttt{for} loop then iterates through the original chroma arrays, and sele
 	\includegraphics[width=\textwidth]{./implementation/experiment/420.png}
 \end{center}
 \caption{\texttt{4:2:0}}
-\end{subfigure}
+\end{subfigure}%
 \begin{subfigure}[b]{0.4\textwidth}
 \begin{center}
 \includegraphics[width=\textwidth]{./implementation/experiment/411.png}
@@ -523,19 +542,19 @@ Although the DCT used on imaged are 2 dimensions, we can explain the concept fro
 
 \begin{figure}[h]
 \centering
-\begin{subfigure}[b]{0.45\textwidth}
+\begin{subfigure}[b]{0.30\textwidth}
 	\centering
 	\includegraphics[width=\textwidth]{./figures/dct/cos1}
 	\caption{$f = 1$}
 	\label{fig:cos1}
 \end{subfigure}
-\begin{subfigure}[b]{0.45\textwidth}
+\begin{subfigure}[b]{0.30\textwidth}
 	\centering
 	\includegraphics[width=\textwidth]{./figures/dct/cos2}
 	\caption{$f=1\, + \, f = 2$}
 	\label{fig:cos2}
 \end{subfigure}
-\begin{subfigure}[b]{0.45\textwidth}
+\begin{subfigure}[b]{0.30\textwidth}
 	\centering
 	\includegraphics[width=\textwidth]{./figures/dct/cos3}
 	\caption{Weighted cosine curves}
@@ -549,7 +568,7 @@ The resulted data points forms a signal.
 If we were to recreate the curve mathematically, we can plot a curve through the data points.
 DCT reconstructs the signal by stacking differently weighted cosine curves of different frequency and amplitude.
 
-For example, figure~\ref{fig:cos1} shows a cosine curve with a period of 8 pixels.
+For example, Figure~\ref{fig:cos1} shows a cosine curve with a period of 8 pixels.
 Lets say this curve has a frequency of 1 unit.
 The purple coordinates represents the resultant signal.
 
@@ -589,6 +608,7 @@ Perform 1D DCT.
 \end{bmatrix}
 \end{equation*}
 
+% Explain this.
 \begin{wrapfigure}{r}{0.3\textwidth}
 \begin{center}
 	\includegraphics[width=\linewidth]{./figures/dct matrix.jpg}
@@ -604,6 +624,8 @@ The results generated by this operation is called the DCT coefficients.
 
 Continuing to use the previous example, this time we will incorporate the full picture.
 Below is the luminance data from \texttt{art.png}.
+
+% Left matrix, right figure
 \begin{equation*}
 \begin{bmatrix}
 	162 & 182 & 153 & 171 & 185 & 173 & 163 & 216 \\
@@ -867,15 +889,15 @@ To convert the string of data into binary, huffman coding is performed.
 Huffman coding furthers losslessly compresses the data by effectively assigning symbols to each element in the string.
 % Finish this once you understand it better!!!
 
-\section{Evaluation!!!!!!}
-
-\subsection{Effectiveness/Benchmark}
-
-\subsection{Speed}
-
-\subsection{Artifacts}
-
-\subsection{Modern Features}
+% \section{Evaluation!!!!!!}
+% 
+% \subsection{Effectiveness/Benchmark}
+% 
+% \subsection{Speed}
+% 
+% \subsection{Artifacts}
+% 
+% \subsection{Modern Features}
 
 \section{Conclusion}
 JFIF compression is an integral part of the internet in both its history and current time.
@@ -883,6 +905,12 @@ Although old, JFIF compression still holds up when used on the correct types of 
 Its compression is high, without losing out majorly on image quality.
 However, development of technology has also bring forwards more types of images, some unsuitable for JFIF compression.
 Image types like digital art and raw photos are better left for newer image compression methods.
+
+\vspace{1em}
+\hrule
+\vspace{1em}
+
+3821 words
 
 \newpage
 \printbibliography
