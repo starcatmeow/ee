@@ -120,7 +120,7 @@ Lossless compression finds repetitive, similar patterns inside a file, condenses
 One example of lossless compression is LZ77~\autocite{lzYT}.
 Commonly used on plain text documents\footnote{\texttt{.txt} files}, LZ77 finds repeated words, and stores it for reference.
 The next time the repeated word is used, LZ77 stores a pointer that points towards the last instance of word.
-In this paragraph, the word \texttt{compression} is used 5 times.
+In this paragraph, the word \texttt{compression} is used 4 times.
 LZ77 will only store the first \texttt{compression}, and save space from the rest.
 
 Lossless compression is good for data with a lot of repetition.
@@ -225,8 +225,8 @@ Videos are stored as a series of pictures.
 Using the same metrics as above, a 10 minute video would take up $104$GiB of space.
 Uploading this to a websites would be extremely impractical.
 
-For example, downloading the website \texttt{https://www.apple.com/iphone-12/} took $75\texttt{MiB}$ of data.
-Out of the $75\texttt{MiB}$ of data, $71.3\texttt{MiB}$ of data was from images.
+For example, downloading the website \texttt{https://www.apple.com/iphone-12/} took $76.4\texttt{MiB}$ of data.
+Out of the $76.4\texttt{MiB}$ of data, $71.3\texttt{MiB}$ of data was from images.
 The rest of the website (including fonts, html, javascript) only occupies $5.1\texttt{MiB}$.
 Over $93\%$ of the website is from images only.
 
@@ -283,7 +283,7 @@ Web developers have to balance image quality with image size when creating a web
 
 Due to the many available web browsers, the standards for web development varies.
 Web browsers support different image formats.
-The most common web browser is Google Chrome\footnote{requires citation}, whilst many web browsers are based on Chrome.
+The most common web browser is Google Chrome~\autocite{enwiki:1033204098}, whilst many web browsers are based on Chrome.
 When displaying an image, web browsers have to decompress, taking up processing power.
 Although processing power is abundant on modern desktops, mobile devices and older computers may suffer.
 Web developers should be aware of the requirements of different image formats.
@@ -582,7 +582,7 @@ DCT\footnote{More specifically DCT-II, used by JIFF compression} propose that we
 The resulted signal is modeled by this mathematical equation.
 The exact mathematics of DCT is too advance for the scope of this paper, implementation of DCT will be done through code.
 \begin{equation}
-	X_k = \sum_{n=0}^{N-1} x_n \cos \left [ \frac{\pi}{N} \left ( n + \frac{1}{2} \right ) \right ] \qquad k = 0, \dots , N - 1
+	X_k = \sum_{n=0}^{N-1} x_n \cos \left [ \frac{\pi}{N} \left ( n + \frac{1}{2} \right ) k \right ] \qquad k = 0, \dots , N - 1
 \end{equation}
 
 % explain why with notation table
